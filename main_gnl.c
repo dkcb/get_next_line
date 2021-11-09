@@ -18,13 +18,14 @@ int main()
 
 	if ((fd = open ("./empty_lines.txt", O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO)) > 0)
 	{
-		while(i < 3)
+		while(i < 5)
 		{
 			ww = get_next_line(fd);
-			printf("%d_ret_fd(%d)_Line_%d= -|%s|-\n",i, fd, l + 1, ww);
-			l++;
 			if (ww == NULL)
 				break ;
+			printf("%d_ret_fd(%d)_Line_%d= -|%s|-\n",i, fd, l + 1, ww);
+			l++;
+
 			// free(ww);
 			i++;
 		}

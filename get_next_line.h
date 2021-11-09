@@ -6,7 +6,7 @@
 /*   By: dkocob <dkocob@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/04 15:58:56 by dkocob        #+#    #+#                 */
-/*   Updated: 2021/11/06 21:18:46 by dkocob        ########   odam.nl         */
+/*   Updated: 2021/11/09 22:20:12 by dkocob        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
+#  define BUFFER_SIZE 5
 # endif
 
 #include <stdlib.h>
@@ -63,4 +63,18 @@ typedef struct s_s
 // 	printf("RS2:%s\n", rest);
 // 	*rp += 1;
 // 	return (ret);
+// }
+
+// size_t	ft_strlcpy(char *d, char *s, int len)
+// {
+// 	size_t	i;
+
+// 	i = 0;
+// 	while (s[i] && i < len)
+// 	{
+// 		d[i] = s[i];
+// 		i++;
+// 	}
+// 	d[i] = '\0';
+// 	return (i);
 // }
