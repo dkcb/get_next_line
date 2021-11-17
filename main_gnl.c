@@ -18,7 +18,7 @@ int main()
 
 	if ((fd = open ("./empty_lines.txt", O_CREAT | O_RDWR, S_IRWXU | S_IRWXG | S_IRWXO)) > 0)
 	{
-		while(i < 5)
+		while(i < 10)
 		{
 			ww = get_next_line(fd);
 			if (ww == NULL)
