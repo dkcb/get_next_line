@@ -5,73 +5,80 @@
 /*                                                     +:+                    */
 /*   By: dkocob <dkocob@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
-/*   Created: 2021/11/04 15:57:56 by dkocob        #+#    #+#                 */
-/*   Updated: 2021/11/17 21:20:15 by dkocob        ########   odam.nl         */
+/*   Created: 2021/03/24 16:10:41 by dkocob        #+#    #+#                 */
+/*   Updated: 2021/04/14 20:07:19 by dkocob        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdlib.h>
-#include <unistd.h>
 
-size_t	ft_strlcpy(char *d, char *s, int len)
+static int	ft_subline(int fd, struct s_st *s)
 {
-	size_t	i;
-
-	i = 0;
-	while (s[i] && i < len)
+	if (s->read[fd] == -1 || !s->re[fd])
+		return (ft_err(fd, s));
+	s->tmp = ft_jsf("", s->re[fd] + 1, 0);
+	if (!s->tmp)
+		return (ft_err(fd, s));
+	free (s->re[fd]);
+	s->re[fd] = ft_jsf("", &s->tmp[ft_nl(s->tmp)], 0);
+	if (!s->re[fd])
+		return (ft_err(fd, s));
+	s->tmp[ft_nl(s->tmp)] = '\0';
+	if (s->read[fd] < BUFFER_SIZE && ft_size(s->re[fd]) == 0)
 	{
-		d[i] = s[i];
-		i++;
+		free(s->re[fd]);
+		s->re[fd] = (void *) 0;
 	}
-	d[i] = '\0';
-	return (i);
+	return (1);
 }
 
-size_t	dc(char *s, char c)
+static int	ft_newread(int fd, struct s_st *s)
 {
-	size_t	i;
+	char	buffer[BUFFER_SIZE + 1];
 
-	i = 0;
-	while (s[i] && s[i] != c)
-		i++;
-	return (i);
+	s->tmp = ft_jsf(s->re[fd], "", 1);
+	while (1)
+	{
+		s->read[fd] = read(fd, buffer, BUFFER_SIZE);
+		if (s->read[fd] == -1 || !s->tmp)
+			return (ft_err(fd, s));
+		buffer[s->read[fd]] = '\0';
+		s->tmp = ft_jsf(s->tmp, buffer, 1);
+		if (s->read[fd] == -1 || !s->tmp)
+			return (ft_err(fd, s));
+		if (ft_nl(buffer) < BUFFER_SIZE || s->read[fd] < BUFFER_SIZE)
+			break ;
+	}
+	s->re[fd] = ft_jsf("", s->tmp, 2);
+	if (s->read[fd] == -1 || !s->re[fd])
+		return (ft_err(fd, s));
+	return (s->read[fd]);
 }
 
-char	*gnl(int fd, char *line, int i, int pos)
+int	get_next_line(int fd, char **line)
 {
-	static char	re[BUFFER_SIZE + 1];
+	static struct s_st	s;
 
-	if (dc(re, '\n') != dc(re, '\0'))
+	if (fd >= 0 && !s.re[fd])
+		s.re[fd] = ft_jsf("", "\n", 0);
+	if (fd < 0 || !line || BUFFER_SIZE < 1 || !s.re[fd])
+		return (-1);
+	if (ft_nl(s.re[fd] + 1) != ft_size(s.re[fd] + 1))
 	{
-		ft_strlcpy(line, re, dc(re, '\n'));
-		ft_strlcpy(re, &re[dc(re, '\n') + 1], dc(&re[dc(re, '\n')], '\0'));
-		return (line);
+		ft_subline(fd, &s);
+		if (s.read[fd] == -1)
+			return (-1);
+		*line = s.tmp;
+		return (1);
 	}
-	if (re[0] != '\0')
-	{
-		pos += dc(re, '\0');
-		ft_strlcpy(line, re, pos);
-		re[0] = '\0';
-	}
-	while (i && dc(re, '\n') == dc(re, '\0'))
-	{
-		i = read(fd, re, BUFFER_SIZE);
-		ft_strlcpy(&line[pos], re, dc(re, '\n'));
-		pos += i;
-	}
-	if (i == 0 && re[0] == '\0' && line[0] == '\0')
-		return (NULL);
-	ft_strlcpy(re, &re[dc(re, '\n') + 1], dc(&re[dc(re, '\n')], '\0'));
-	return (line);
-}
-
-char	*get_next_line(int fd)
-{
-	static char	*line;
-
-	line = malloc(sizeof(char) * 200000);
-	if (!line)
-		return (NULL);
-	return (gnl(fd, line, 1, 0));
+	ft_newread(fd, &s);
+	if (s.read[fd] == -1)
+		return (-1);
+	ft_subline(fd, &s);
+	if (s.read[fd] == -1)
+		return (-1);
+	*line = s.tmp;
+	if (s.read[fd] < BUFFER_SIZE && !s.re[fd])
+		return (0);
+	return (1);
 }
