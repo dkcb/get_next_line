@@ -6,11 +6,13 @@
 /*   By: dkocob <dkocob@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/04 15:57:56 by dkocob        #+#    #+#                 */
-/*   Updated: 2021/11/17 20:45:08 by dkocob        ########   odam.nl         */
+/*   Updated: 2021/11/17 21:04:55 by dkocob        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 size_t	ft_strlcpy(char *d, char *s, int len)
 {
@@ -36,12 +38,9 @@ size_t	dc(char *s, char c)
 	return (i);
 }
 
-char *get_next_line(int fd)
+char	*gnl(int fd, char *line, int i, int pos)
 {
-	char	*line = malloc(sizeof(char) * 20000000);
 	static char	re[BUFFER_SIZE + 1];
-	int i = 1;
-	int pos = 0;
 
 	if (dc(re, '\n') != dc(re, '\0'))
 	{
@@ -55,16 +54,24 @@ char *get_next_line(int fd)
 		ft_strlcpy(line, re, pos);
 		re[0] = '\0';
 	}
-	while (i)
+	while (i && dc(re, '\n') == dc(re, '\0'))
 	{
 		i = read(fd, re, BUFFER_SIZE);
 		ft_strlcpy(&line[pos], re, dc(re, '\n'));
-		if (dc(re, '\n') != dc(re, '\0'))
-			break ;
 		pos += i;
 	}
 	if (i == 0 && re[0] == '\0' && line[0] == '\0')
 		line = NULL;
 	ft_strlcpy(re, &re[dc(re, '\n') + 1], dc(&re[dc(re, '\n')], '\0'));
 	return (line);
+}
+
+char	*get_next_line(int fd)
+{
+	char	*line;
+
+	line = malloc(sizeof(char) * 20000000000);
+	if (!line)
+		return (NULL);
+	return (gnl(fd, line, 1, 0));
 }
