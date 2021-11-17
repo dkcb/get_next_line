@@ -6,7 +6,7 @@
 /*   By: dkocob <dkocob@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/04 15:57:56 by dkocob        #+#    #+#                 */
-/*   Updated: 2021/11/17 21:04:55 by dkocob        ########   odam.nl         */
+/*   Updated: 2021/11/17 21:20:15 by dkocob        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,16 @@ char	*gnl(int fd, char *line, int i, int pos)
 		pos += i;
 	}
 	if (i == 0 && re[0] == '\0' && line[0] == '\0')
-		line = NULL;
+		return (NULL);
 	ft_strlcpy(re, &re[dc(re, '\n') + 1], dc(&re[dc(re, '\n')], '\0'));
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	char	*line;
+	static char	*line;
 
-	line = malloc(sizeof(char) * 20000000000);
+	line = malloc(sizeof(char) * 200000);
 	if (!line)
 		return (NULL);
 	return (gnl(fd, line, 1, 0));
