@@ -6,7 +6,7 @@
 /*   By: dkocob <dkocob@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2021/11/04 15:58:56 by dkocob        #+#    #+#                 */
-/*   Updated: 2021/11/17 17:39:17 by dkocob        ########   odam.nl         */
+/*   Updated: 2021/11/17 19:07:33 by dkocob        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 22
+#  define BUFFER_SIZE 3
 # endif
 
 #include <stdlib.h>
